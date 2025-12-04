@@ -4,10 +4,24 @@ dotenv.config();
 
 interface EnvConfig {
   PORT: string;
+  NODE_ENV: "development" | "production";
+
+  REDIS_HOST: string;
+  REDIS_PORT: string;
+  REDIS_USERNAME: string;
+  REDIS_PASSWORD: string;
 }
 
 const loadEnvVariables = (): EnvConfig => {
-  const requiredEnvVariables: string[] = ["PORT"];
+  const requiredEnvVariables: string[] = [
+    "PORT",
+    "NODE_ENV",
+
+    "REDIS_HOST",
+    "REDIS_PORT",
+    "REDIS_USERNAME",
+    "REDIS_PASSWORD",
+  ];
 
   requiredEnvVariables.forEach((key) => {
     if (!process.env[key]) {
@@ -17,6 +31,12 @@ const loadEnvVariables = (): EnvConfig => {
 
   return {
     PORT: process.env.PORT as string,
+    NODE_ENV: process.env.NODE_ENV as "development" | "production",
+
+    REDIS_HOST: process.env.REDIS_HOST as string,
+    REDIS_PORT: process.env.REDIS_PORT as string,
+    REDIS_USERNAME: process.env.REDIS_USERNAME as string,
+    REDIS_PASSWORD: process.env.REDIS_PASSWORD as string,
   };
 };
 
