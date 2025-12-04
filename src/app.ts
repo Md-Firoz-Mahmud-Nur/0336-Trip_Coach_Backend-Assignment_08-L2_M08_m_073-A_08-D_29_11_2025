@@ -4,7 +4,7 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 import { router } from "./app/routes";
 import { globalErrorHandler } from "./app/middlewares/globalerrorhandler";
-import notFound from "./app/middlewares/notfoundroute";
+import notFound from "./app/middlewares/notFoundRoutea";
 
 const app = express();
 
