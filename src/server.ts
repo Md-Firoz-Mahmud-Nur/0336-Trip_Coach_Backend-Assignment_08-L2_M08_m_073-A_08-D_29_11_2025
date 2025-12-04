@@ -3,14 +3,14 @@ import { Server } from "http";
 import mongoose from "mongoose";
 import app from "./app";
 import { envVars } from "./app/config/env";
-import { connectRedis } from "./app/config/redis.config";
+// import { connectRedis } from "./app/config/redis.config";
 
 let server: Server;
 
 const startServer = async () => {
   try {
     await mongoose.connect(
-      `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.ldjypij.mongodb.net/tripNest?retryWrites=true&w=majority&appName=Cluster0`
+      `mongodb+srv://${process.env.MONGO_DB_USER}:${process.env.MONGO_DB_SECRET_KEY}@cluster0.${process.env.MONGO_DB_URI_SECRET_KEY}.mongodb.net/tripCoach?retryWrites=true&w=majority&appName=Cluster0`
     );
 
     console.log("Connected to DB!!");
@@ -24,7 +24,7 @@ const startServer = async () => {
 };
 
 (async () => {
-  await connectRedis();
+  // await connectRedis();
 
   await startServer();
 })();
