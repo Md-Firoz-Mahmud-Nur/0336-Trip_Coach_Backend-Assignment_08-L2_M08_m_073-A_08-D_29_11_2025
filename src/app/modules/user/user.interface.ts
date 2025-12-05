@@ -1,9 +1,9 @@
 import { Types } from "mongoose";
 
-export enum UserRole {
+export enum Role {
   ADMIN = "ADMIN",
-  USER = "USER",
-  AGENT = "AGENT",
+  TOURIST = "TOURIST",
+  GUIDE = "GUIDE",
 }
 
 export interface IAuthProvider {
@@ -26,14 +26,15 @@ export interface IUser {
   password?: string;
 
   phone?: string;
-  profileImage?: string;
+  picture?: string;
   address?: string;
 
   status?: AccountStatus;
   isVerified?: boolean;
   isDeleted?: boolean;
+  isBlocked?: boolean;
 
-  role: UserRole;
+  role: Role;
   auths?: IAuthProvider[];
 
   bookings?: Types.ObjectId[];

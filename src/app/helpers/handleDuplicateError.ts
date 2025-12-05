@@ -1,11 +1,13 @@
-import { TGenericErrorResponse } from "../interface/error.types";
+import { MongoServerError } from "mongodb";
+import { TGenericErrorResponse } from "../interfaces/error.types";
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
-export const handlerDuplicateError = (err: any): TGenericErrorResponse => {
-  const matchedArray = err.message.match(/"([^"]*)"/);
-
+export const handlerDuplicateError = (
+  err: MongoServerError
+): TGenericErrorResponse => {
+  console.log("temp", err);
   return {
-    statusCode: 400,
-    message: `${matchedArray[1]} already exists!!`,
+    statusCode: 409,
+    message: `${Object.values(err.keyValue)} already exists`,
+    // message = `Duplicate ${Object.keys(err.keyValue)} entered, ${Object.values(err.keyValue)} already exists`,
   };
 };

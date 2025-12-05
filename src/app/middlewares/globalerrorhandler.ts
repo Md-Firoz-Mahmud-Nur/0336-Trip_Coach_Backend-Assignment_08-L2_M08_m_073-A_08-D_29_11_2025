@@ -1,76 +1,48 @@
-/* eslint-disable no-console */
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { NextFunction, Request, Response } from "express";
-import { envVars } from "../config/env";
-import AppError from "../errorHelper/appError";
+import { ErrorRequestHandler } from "express";
+import { envVariables } from "../config/env";
+
+import AppError from "../errorHelper/AppError";
 import { handleCastError } from "../helpers/handleCastError";
 import { handlerDuplicateError } from "../helpers/handleDuplicateError";
 import { handlerValidationError } from "../helpers/handlerValidationError";
 import { handlerZodError } from "../helpers/handlerZodError";
-import { TErrorSources } from "../interface/error.types";
+import { TErrorSources } from "../interfaces/error.types";
 
-export const globalErrorHandler = (
-  err: any,
-  req: Request,
-  res: Response,
-  next: NextFunction
+export const globalErrorHandler: ErrorRequestHandler = (
+  err,
+  req,
+  res,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  next
 ) => {
-  if (envVars.NODE_ENV === "development") {
-    console.log(err);
-  }
+  // eslint-disable-next-line no-console
+  console.log("\n \n error from global middleware \n \n", err);
 
   let errorSources: TErrorSources[] = [];
   let statusCode = 500;
-  let message = "Something Went Wrong!!";
-
-  //Duplicate error
+  let message = `Something went wrong ${err.message} from global middleware`;
   if (err.code === 11000) {
     const simplifiedError = handlerDuplicateError(err);
     statusCode = simplifiedError.statusCode;
     message = simplifiedError.message;
-  }
-  // Object ID error / Cast Error
-  else if (err.name === "CastError") {
+  } else if (err.name === "CastError") {
     const simplifiedError = handleCastError(err);
     statusCode = simplifiedError.statusCode;
     message = simplifiedError.message;
-  }
-  //Zod Error
-  else if (err.name === "ZodError") {
+  } else if (err.name === "ZodError") {
     const simplifiedError = handlerZodError(err);
     statusCode = simplifiedError.statusCode;
-    message = simplifiedError.message;
     errorSources = simplifiedError.errorSources as TErrorSources[];
-  }
-
-  //Mongoose Validation Error
-  else if (err.name === "ValidationError") {
+    message = simplifiedError.message;
+  } else if (err.name === "ValidationError") {
     const simplifiedError = handlerValidationError(err);
     statusCode = simplifiedError.statusCode;
     errorSources = simplifiedError.errorSources as TErrorSources[];
     message = simplifiedError.message;
-  }
-
-  //App Error
-  else if (err instanceof AppError) {
+  } else if (err instanceof AppError) {
     statusCode = err.statusCode;
     message = err.message;
-  }
-
-  //Unhandled Rejection
-  else if (err.name === "UnhandledRejection") {
-    statusCode = 500;
-    message = err.message || "Something went wrong";
-  }
-  //Unhandled Error
-  else if (err.name === "UnhandledError") {
-    statusCode = 500;
-    message = err.message || "Something went wrong";
-  }
-
-  //Other Errors
-  else if (err instanceof Error) {
+  } else if (err instanceof Error) {
     statusCode = 500;
     message = err.message;
   }
@@ -78,8 +50,8 @@ export const globalErrorHandler = (
   res.status(statusCode).json({
     success: false,
     message,
+    err,
     errorSources,
-    err: envVars.NODE_ENV === "development" ? err : null,
-    stack: envVars.NODE_ENV === "development" ? err.stack : null,
+    stack: envVariables.NODE_ENV === "development" ? err.stack : null,
   });
 };

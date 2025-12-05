@@ -1,43 +1,91 @@
-/* eslint-disable no-console */
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import { NextFunction, Request, Response } from "express";
+import { Request, Response } from "express";
 import httpStatus from "http-status-codes";
-
-import AppError from "../../errorHelper/appError";
+import { JwtPayload } from "jsonwebtoken";
+import { envVariables } from "../../config/env";
 import { catchAsync } from "../../utils/catchAsync";
 import { sendResponse } from "../../utils/sendResponse";
 import { setAuthCookie } from "../../utils/setCookie";
-import { createUserTokens } from "../../utils/userTokens";
-import { AuthServices } from "./auth.service";
+import { authServices } from "./auth.service";
+import AppError from "../../errorHelper/AppError";
 
-const credentialsLogin = catchAsync(
-  async (req: Request, res: Response, next: NextFunction) => {
-    const loginInfo = await AuthServices.credentialsLogin(req.body);
+const credentialsLogin = catchAsync(async (req: Request, res: Response) => {
+  const loginInfo = await authServices.credentialsLogin(req.body);
 
-    if (!loginInfo) {
-      throw new AppError(httpStatus.UNAUTHORIZED, "Invalid credentials");
-    }
+  setAuthCookie(res, loginInfo);
 
-    const userToken = createUserTokens(loginInfo);
+  sendResponse(res, {
+    success: true,
+    statusCode: httpStatus.CREATED,
+    message: "User Logged In Successfully",
+    data: loginInfo,
+  });
+});
 
-    setAuthCookie(res, userToken);
+const getNewAccessToken = catchAsync(async (req: Request, res: Response) => {
+  const refreshToken = req.cookies.refreshToken;
 
-    const { password, ...rest } = loginInfo.toObject();
-
-    sendResponse(res, {
-      success: true,
-      statusCode: httpStatus.OK,
-      message: "User Logged In Successfully",
-      data: {
-        accessToken: userToken.accessToken,
-        refreshToken: userToken.refreshToken,
-        user: rest,
-      },
-    });
+  if (!refreshToken) {
+    throw new AppError(httpStatus.BAD_REQUEST, "Refresh Token is required");
   }
-);
 
-export const AuthControllers = {
+  const tokenInfo = await authServices.getNewAccessToken(
+    refreshToken as string
+  );
+
+  setAuthCookie(res, tokenInfo);
+
+  sendResponse(res, {
+    success: true,
+    statusCode: httpStatus.OK,
+    message: "Get New Access Token Successfully",
+    data: tokenInfo,
+  });
+});
+
+const logout = catchAsync(async (req: Request, res: Response) => {
+  res.clearCookie("accessToken", {
+    httpOnly: true,
+    secure: envVariables.NODE_ENV === "production",
+    sameSite: envVariables.NODE_ENV === "production" ? "none" : "lax",
+  });
+
+  res.clearCookie("refreshToken", {
+    httpOnly: true,
+    secure: envVariables.NODE_ENV === "production",
+    sameSite: envVariables.NODE_ENV === "production" ? "none" : "lax",
+  });
+
+  sendResponse(res, {
+    success: true,
+    statusCode: httpStatus.OK,
+    message: "User Logged Out Successfully",
+    data: null,
+  });
+});
+
+const resetPassword = catchAsync(async (req: Request, res: Response) => {
+  const decodedToken = req.user;
+  const password = req.body.password;
+
+  const updatePassword = req.body.updatePassword;
+
+  await authServices.resetPassword(
+    decodedToken as JwtPayload,
+    password,
+    updatePassword
+  );
+
+  sendResponse(res, {
+    success: true,
+    statusCode: httpStatus.OK,
+    message: "Password Changed Successfully",
+    data: null,
+  });
+});
+
+export const authControllers = {
   credentialsLogin,
+  getNewAccessToken,
+  logout,
+  resetPassword,
 };
