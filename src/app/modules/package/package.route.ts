@@ -33,7 +33,7 @@ router.get("/:id", PackageController.getSinglePackage);
 
 router.patch(
   "/:id",
-  checkAuth(Role.ADMIN),
+  checkAuth(Role.ADMIN, Role.GUIDE),
   validateRequest(updatePackageZodSchema),
   PackageController.updatePackage
 );
