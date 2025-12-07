@@ -55,7 +55,16 @@ const getAllBookings = async (query: Record<string, string>) => {
   return { data, meta };
 };
 
+const getSingleBooking = async (id: string) => {
+  const booking = await Booking.findById(id)
+    .populate("member", "name email phone")
+    .populate("package", "title slug costFrom");
+  if (!booking) throw new Error("Booking not found.");
+  return booking;
+};
+
 export const BookingService = {
   createBooking,
   getAllBookings,
+  getSingleBooking,
 };
