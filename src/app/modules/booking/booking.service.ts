@@ -4,6 +4,8 @@ import { Booking } from "./booking.model";
 
 import { Package } from "../package/package.model";
 import { IBooking } from "./booking.interface";
+import { bookingSearchableFields } from "./booking.constant";
+import { QueryBuilder } from "../../utils/QueryBuilder";
 
 const createBooking = async (payload: IBooking) => {
   const session = await mongoose.startSession();
@@ -33,6 +35,27 @@ const createBooking = async (payload: IBooking) => {
   }
 };
 
+const getAllBookings = async (query: Record<string, string>) => {
+  const qb = new QueryBuilder(
+    Booking.find()
+      .populate("member", "name email")
+      .populate("package", "title slug"),
+    query
+  );
+
+  const bookingsQuery = qb
+    .search(bookingSearchableFields)
+    .filter()
+    .sort()
+    .fields()
+    .paginate();
+
+  const [data, meta] = await Promise.all([bookingsQuery.build(), qb.getMeta()]);
+
+  return { data, meta };
+};
+
 export const BookingService = {
   createBooking,
+  getAllBookings,
 };
