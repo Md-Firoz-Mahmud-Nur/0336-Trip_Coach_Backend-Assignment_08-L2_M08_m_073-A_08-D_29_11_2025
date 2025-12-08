@@ -26,6 +26,10 @@ interface EnvConfig {
   CLOUDINARY_API_SECRET: string;
   CLOUDINARY_CLOUD_NAME: string;
   CLOUDINARY_API_KEY: string;
+
+  STRIPE_SECRET_KEY: string;
+  STRIPE_SUCCESS_URL: string;
+  STRIPE_CANCEL_URL: string;
 }
 
 const loadEnvVariables = (): EnvConfig => {
@@ -47,6 +51,9 @@ const loadEnvVariables = (): EnvConfig => {
     "CLOUDINARY_API_SECRET",
     "CLOUDINARY_CLOUD_NAME",
     "CLOUDINARY_API_KEY",
+    "STRIPE_SECRET_KEY",
+    "STRIPE_SUCCESS_URL",
+    "STRIPE_CANCEL_URL",
   ];
 
   requiredEnvVariables.forEach((key) => {
@@ -73,6 +80,9 @@ const loadEnvVariables = (): EnvConfig => {
     CLOUDINARY_API_SECRET: process.env.CLOUDINARY_API_SECRET as string,
     CLOUDINARY_CLOUD_NAME: process.env.CLOUDINARY_CLOUD_NAME as string,
     CLOUDINARY_API_KEY: process.env.CLOUDINARY_API_KEY as string,
+    STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY as string,
+    STRIPE_SUCCESS_URL: process.env.STRIPE_SUCCESS_URL as string,
+    STRIPE_CANCEL_URL: process.env.STRIPE_CANCEL_URL as string,
   };
 };
 

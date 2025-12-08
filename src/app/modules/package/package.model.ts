@@ -25,7 +25,7 @@ const packageSchema = new Schema<IPackage>(
     images: { type: [String], default: [] },
     destination: { type: String, index: true },
     costFrom: { type: Number, default: 0 },
-    currency: { type: String, default: "BDT" },
+    currency: { type: String, default: "USD" },
     durationDays: { type: Number, default: 1 },
     capacity: { type: Number, default: 0 },
     availableSeats: { type: Number, default: 0 },

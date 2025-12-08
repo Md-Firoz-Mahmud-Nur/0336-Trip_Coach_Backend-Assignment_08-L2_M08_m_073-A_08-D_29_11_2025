@@ -9,7 +9,7 @@ const bookingSchema = new Schema<IBooking>(
     endDate: { type: Date },
     pax: { type: Number, required: true, default: 1 },
     totalAmount: { type: Number, required: true, default: 0 },
-    currency: { type: String, default: "BDT" },
+    currency: { type: String, default: "USD" },
     status: {
       type: String,
       enum: Object.values(BookingStatus),
