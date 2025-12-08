@@ -2,10 +2,10 @@
 import mongoose from "mongoose";
 import { Booking } from "./booking.model";
 
-import { Package } from "../package/package.model";
-import { IBooking } from "./booking.interface";
-import { bookingSearchableFields } from "./booking.constant";
 import { QueryBuilder } from "../../utils/QueryBuilder";
+import { Package } from "../package/package.model";
+import { bookingSearchableFields } from "./booking.constant";
+import { IBooking } from "./booking.interface";
 
 const createBooking = async (payload: IBooking) => {
   const session = await mongoose.startSession();
@@ -63,8 +63,30 @@ const getSingleBooking = async (id: string) => {
   return booking;
 };
 
+const getMyBooking = async (
+  memberId: string,
+  query: Record<string, string>
+) => {
+  const qb = new QueryBuilder(
+    Booking.find({ member: memberId }).populate(
+      "package",
+      "title slug costFrom"
+    ),
+    query
+  );
+  const bookingsQuery = qb
+    .search(bookingSearchableFields)
+    .filter()
+    .sort()
+    .fields()
+    .paginate();
+  const [data, meta] = await Promise.all([bookingsQuery.build(), qb.getMeta()]);
+  return { data, meta };
+};
+
 export const BookingService = {
   createBooking,
   getAllBookings,
   getSingleBooking,
+  getMyBooking,
 };

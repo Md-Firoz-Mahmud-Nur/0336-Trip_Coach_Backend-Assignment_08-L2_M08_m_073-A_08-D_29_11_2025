@@ -22,4 +22,6 @@ router.get(
   BookingController.getSingleBooking
 );
 
+router.get("/me", checkAuth(Role.TOURIST), BookingController.getMyBooking);
+
 export const bookingRoutes = router;
