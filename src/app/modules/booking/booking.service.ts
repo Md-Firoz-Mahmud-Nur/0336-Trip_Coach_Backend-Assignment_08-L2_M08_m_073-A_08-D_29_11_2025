@@ -127,10 +127,35 @@ const updateBookingStatus = async (id: string, payload: Partial<IBooking>) => {
   return booking;
 };
 
+const cancelBooking = async (id: string, memberId: string) => {
+  const booking = await Booking.findById(id);
+
+  if (!booking) throw new Error("Booking not found.");
+  if (booking.member.toString() !== memberId)
+    throw new Error("Unauthorized to cancel this booking.");
+  if (booking.status === BookingStatus.CANCELLED)
+    throw new Error("Booking already cancelled.");
+
+  const pkg = await Package.findById(booking.package);
+  if (pkg && pkg.availableSeats !== undefined && pkg.availableSeats !== null) {
+    pkg.availableSeats = (pkg.availableSeats || 0) + (booking.pax || 1);
+    await pkg.save();
+  }
+
+  booking.status = BookingStatus.CANCELLED;
+
+  if (booking.paymentStatus === PaymentStatus.PAID)
+    booking.paymentStatus = PaymentStatus.REFUNDED;
+
+  await booking.save();
+  return booking;
+};
+
 export const BookingService = {
   createBooking,
   getAllBookings,
   getSingleBooking,
   getMyBooking,
   updateBookingStatus,
+  cancelBooking,
 };
