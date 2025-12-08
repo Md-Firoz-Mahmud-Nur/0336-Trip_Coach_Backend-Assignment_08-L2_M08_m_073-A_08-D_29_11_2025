@@ -3,7 +3,10 @@ import { checkAuth } from "../../middlewares/checkAuth";
 import { validateRequest } from "../../middlewares/validateRequest";
 import { Role } from "../user/user.interface";
 import { BookingController } from "./booking.controller";
-import { createBookingZodSchema } from "./booking.validation";
+import {
+  createBookingZodSchema,
+  updateBookingStatusZodSchema,
+} from "./booking.validation";
 
 const router = express.Router();
 
@@ -23,5 +26,12 @@ router.get(
 );
 
 router.get("/me", checkAuth(Role.TOURIST), BookingController.getMyBooking);
+
+router.patch(
+  "/admin/:id/status",
+  checkAuth(Role.ADMIN),
+  validateRequest(updateBookingStatusZodSchema),
+  BookingController.updateBookingStatus
+);
 
 export const bookingRoutes = router;

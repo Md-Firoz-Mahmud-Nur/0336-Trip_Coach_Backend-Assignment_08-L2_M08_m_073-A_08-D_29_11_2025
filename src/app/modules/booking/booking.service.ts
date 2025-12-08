@@ -5,7 +5,7 @@ import { Booking } from "./booking.model";
 import { QueryBuilder } from "../../utils/QueryBuilder";
 import { Package } from "../package/package.model";
 import { bookingSearchableFields } from "./booking.constant";
-import { IBooking } from "./booking.interface";
+import { BookingStatus, IBooking, PaymentStatus } from "./booking.interface";
 
 const createBooking = async (payload: IBooking) => {
   const session = await mongoose.startSession();
@@ -84,9 +84,53 @@ const getMyBooking = async (
   return { data, meta };
 };
 
+const updateBookingStatus = async (id: string, payload: Partial<IBooking>) => {
+  const booking = await Booking.findById(id);
+  if (!booking) throw new Error("Booking not found.");
+
+  const prevStatus = booking.status;
+  const prevPaymentStatus = booking.paymentStatus;
+
+  if (
+    payload.status === BookingStatus.CANCELLED &&
+    prevStatus !== BookingStatus.CANCELLED
+  ) {
+    const pkg = await Package.findById(booking.package);
+    if (
+      pkg &&
+      pkg.availableSeats !== undefined &&
+      pkg.availableSeats !== null
+    ) {
+      pkg.availableSeats = (pkg.availableSeats || 0) + (booking.pax || 1);
+      await pkg.save();
+    }
+
+    if (booking.paymentStatus === PaymentStatus.PAID) {
+      booking.paymentStatus = PaymentStatus.REFUNDED;
+    }
+  }
+
+  if (
+    payload.status === BookingStatus.CONFIRMED &&
+    prevStatus !== BookingStatus.CONFIRMED
+  ) {
+  }
+
+  booking.status = (payload.status as BookingStatus) || booking.status;
+  if (payload.paymentStatus)
+    booking.paymentStatus = payload.paymentStatus as PaymentStatus;
+  if ((payload as any).transactionId)
+    booking.transactionId = (payload as any).transactionId;
+  if ((payload as any).notes) booking.notes = (payload as any).notes;
+
+  await booking.save();
+  return booking;
+};
+
 export const BookingService = {
   createBooking,
   getAllBookings,
   getSingleBooking,
   getMyBooking,
+  updateBookingStatus,
 };
