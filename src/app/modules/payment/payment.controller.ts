@@ -8,6 +8,7 @@ import { PaymentService } from "./payment.service";
 
 import { envVariables } from "../../config/env";
 import AppError from "../../errorHelper/AppError";
+import { Payment } from "./payment.model";
 
 const initStripeCheckout = catchAsync(async (req: Request, res: Response) => {
   const { bookingId } = req.body;
@@ -30,6 +31,15 @@ const initStripeCheckout = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+const getPayments = async (req: Request, res: Response) => {
+  const payments = await Payment.find().sort({ createdAt: -1 });
+  return res.json({
+    success: true,
+    data: payments,
+  });
+};
+
 export const PaymentController = {
   initStripeCheckout,
+  getPayments,
 };

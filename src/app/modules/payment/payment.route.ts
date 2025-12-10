@@ -7,6 +7,8 @@ import { initPaymentZodSchema } from "./payment.validation";
 
 const router = express.Router();
 
+router.get("/", checkAuth(Role.ADMIN), PaymentController.getPayments);
+
 router.post(
   "/create",
   checkAuth(Role.TOURIST),
