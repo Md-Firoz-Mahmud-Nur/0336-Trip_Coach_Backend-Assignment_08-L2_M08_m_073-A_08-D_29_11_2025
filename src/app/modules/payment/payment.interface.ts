@@ -17,6 +17,7 @@ export interface IPayment {
   gatewayPaymentIntentId?: string;
   status?: PaymentStatus;
   metadata?: Record<string, any>;
+  member?: Types.ObjectId;
   createdAt?: Date;
   updatedAt?: Date;
 }

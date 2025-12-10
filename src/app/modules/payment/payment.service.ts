@@ -5,6 +5,7 @@ import { stripe } from "./stripe.config";
 
 import { Booking } from "../booking/booking.model";
 
+import { Types } from "mongoose";
 import AppError from "../../errorHelper/AppError";
 import { PaymentStatus } from "./payment.interface";
 
@@ -68,6 +69,30 @@ const createCheckoutSession = async (
   };
 };
 
+const getSinglePaymentAdmin = async (paymentId: string) => {
+  if (!Types.ObjectId.isValid(paymentId)) {
+    throw new AppError(400, "Invalid payment ID");
+  }
+
+  const payment = await Payment.findById(paymentId)
+    .populate("member", "name email phone role")
+    .populate({
+      path: "booking",
+      select: "pax status paymentStatus totalAmount",
+      populate: {
+        path: "package",
+        select: "title slug destination costFrom",
+      },
+    });
+
+  if (!payment) {
+    throw new AppError(404, "Payment not found");
+  }
+
+  return payment;
+};
+
 export const PaymentService = {
   createCheckoutSession,
+  getSinglePaymentAdmin,
 };

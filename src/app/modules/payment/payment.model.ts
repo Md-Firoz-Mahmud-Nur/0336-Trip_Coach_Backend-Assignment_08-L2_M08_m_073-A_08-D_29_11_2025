@@ -15,6 +15,7 @@ const paymentSchema = new Schema<IPayment>(
       default: PaymentStatus.PENDING,
     },
     metadata: { type: Schema.Types.Mixed },
+    member: { type: Schema.Types.ObjectId, ref: "User" },
   },
   { timestamps: true, versionKey: false }
 );

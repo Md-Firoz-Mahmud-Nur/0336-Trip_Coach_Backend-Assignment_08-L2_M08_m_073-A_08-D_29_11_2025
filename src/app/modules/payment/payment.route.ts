@@ -16,4 +16,10 @@ router.post(
   PaymentController.initStripeCheckout
 );
 
+router.get(
+  "/admin/:paymentId",
+  checkAuth(Role.ADMIN),
+  PaymentController.getSinglePaymentAdmin
+);
+
 export const paymentRoutes = router;

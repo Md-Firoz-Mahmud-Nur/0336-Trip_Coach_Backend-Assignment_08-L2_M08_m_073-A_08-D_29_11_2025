@@ -39,7 +39,23 @@ const getPayments = async (req: Request, res: Response) => {
   });
 };
 
+const getSinglePaymentAdmin = catchAsync(
+  async (req: Request, res: Response) => {
+    const { paymentId } = req.params;
+
+    const result = await PaymentService.getSinglePaymentAdmin(paymentId);
+
+    sendResponse(res, {
+      statusCode: 200,
+      success: true,
+      message: "Payment retrieved successfully",
+      data: result,
+    });
+  }
+);
+
 export const PaymentController = {
   initStripeCheckout,
   getPayments,
+  getSinglePaymentAdmin,
 };
