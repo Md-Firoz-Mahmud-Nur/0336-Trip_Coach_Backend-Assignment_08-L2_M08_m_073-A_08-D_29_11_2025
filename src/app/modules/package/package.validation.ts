@@ -1,6 +1,7 @@
 import z from "zod";
 
 export const createPackageZodSchema = z.object({
+  guide: z.string(),
   title: z.string().min(3, "Title must be at least 3 characters."),
   summary: z.string().max(250).optional(),
   description: z.string().optional(),
@@ -19,10 +20,11 @@ export const createPackageZodSchema = z.object({
   itinerary: z.array(z.string()).optional(),
   minAge: z.number().int().optional(),
   maxAge: z.number().int().optional(),
-  packageType: z.string().optional(),
+  packageType: z.string(),
   division: z.string().optional(),
   tags: z.array(z.string()).optional(),
   deleteImages: z.array(z.string()).optional(),
+  meetingPoint: z.string().optional(),
 });
 
 export const updatePackageZodSchema = createPackageZodSchema.partial();

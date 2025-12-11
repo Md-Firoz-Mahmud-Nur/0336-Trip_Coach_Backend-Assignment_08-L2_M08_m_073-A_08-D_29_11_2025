@@ -29,12 +29,12 @@ export interface IPackage {
   minAge?: number;
   maxAge?: number;
   division?: Types.ObjectId;
-  packageType?: Types.ObjectId;
+  packageType: Types.ObjectId;
   tags?: string[];
   createdAt?: Date;
   updatedAt?: Date;
   isActive?: boolean;
   deleteImages?: string[];
   meetingPoint?: string;
-  guide?: Types.ObjectId;
+  guide: Types.ObjectId;
 }
