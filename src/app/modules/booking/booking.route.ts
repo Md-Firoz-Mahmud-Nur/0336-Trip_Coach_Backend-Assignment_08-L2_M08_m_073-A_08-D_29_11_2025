@@ -29,7 +29,7 @@ router.get("/me", checkAuth(Role.TOURIST), BookingController.getMyBooking);
 
 router.patch(
   "/admin/:id/status",
-  checkAuth(Role.ADMIN),
+  checkAuth(Role.ADMIN, Role.TOURIST),
   validateRequest(updateBookingStatusZodSchema),
   BookingController.updateBookingStatus
 );
