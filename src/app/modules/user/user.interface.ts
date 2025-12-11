@@ -24,6 +24,7 @@ export interface IUser {
   name: string;
   email: string;
   password?: string;
+  isGuideDocumentSubmit: boolean;
 
   phone?: string;
   picture?: string;

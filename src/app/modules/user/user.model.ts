@@ -18,6 +18,7 @@ const userSchema = new Schema<IUser>(
     name: { type: String, required: true },
     email: { type: String, required: true, unique: true },
     password: { type: String },
+    isGuideDocumentSubmit: { type: Boolean, default: false },
 
     // user role
     role: {
@@ -28,7 +29,7 @@ const userSchema = new Schema<IUser>(
 
     // optional
     phone: { type: String },
-    profileImage: { type: String },
+    picture: { type: String },
     address: { type: String },
 
     // account state

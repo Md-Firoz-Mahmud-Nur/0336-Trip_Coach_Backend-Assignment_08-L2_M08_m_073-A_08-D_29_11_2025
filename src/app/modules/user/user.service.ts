@@ -6,7 +6,7 @@ import { IAuthProvider, IUser, Role } from "./user.interface";
 import { User } from "./user.model";
 
 const createUser = async (payload: Partial<IUser>) => {
-  const { email, password, ...rest } = payload;
+  const { email, password, role, ...rest } = payload;
 
   const isUserExit = await User.findOne({ email });
 
@@ -21,12 +21,16 @@ const createUser = async (payload: Partial<IUser>) => {
     providerId: email as string,
   };
 
+  console.log({ payload });
+
   const user = await User.create({
     email,
     password: hashedPassword,
     auths: [authProvider],
     ...rest,
   });
+
+  console.log({ user });
 
   return user;
 };
