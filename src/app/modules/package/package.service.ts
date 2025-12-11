@@ -36,7 +36,6 @@ const getSinglePackage = async (id: string) => {
   return pkg;
 };
 
-
 const updatePackage = async (id: string, payload: Partial<IPackage>) => {
   const existing = await Package.findById(id);
   if (!existing) throw new Error("Package not found.");
@@ -77,7 +76,6 @@ const deletePackage = async (id: string) => {
   return await Package.findByIdAndDelete(id);
 };
 
-
 const createPackageType = async (payload: IPackageType) => {
   const exist = await PackageType.findOne({ name: payload.name });
   if (exist) throw new Error("Package type already exists.");
@@ -91,6 +89,38 @@ const getAllPackageTypes = async (query: Record<string, string>) => {
   return { data, meta };
 };
 
+const updatePackageType = async (
+  id: string,
+  payload: Partial<IPackageType>
+) => {
+  const exist = await PackageType.findById(id);
+  if (!exist) throw new Error("Package type not found.");
+
+  // prevent duplicate name
+  if (payload.name) {
+    const nameExists = await PackageType.findOne({
+      name: payload.name,
+      _id: { $ne: id },
+    });
+
+    if (nameExists) throw new Error("Package type name already exists.");
+  }
+
+  const result = await PackageType.findByIdAndUpdate(id, payload, {
+    new: true,
+    runValidators: true,
+  });
+
+  return result;
+};
+
+const deletePackageType = async (id: string) => {
+  const exist = await PackageType.findById(id);
+  if (!exist) throw new Error("Package type not found.");
+
+  const result = await PackageType.findByIdAndDelete(id);
+  return result;
+};
 
 const getPackageStats = async () => {
   const totalPackages = await Package.countDocuments();
@@ -130,4 +160,6 @@ export const PackageService = {
   createPackageType,
   getAllPackageTypes,
   getPackageStats,
+  updatePackageType,
+  deletePackageType,
 };

@@ -18,11 +18,26 @@ router.post(
   PackageController.createPackageType
 );
 
+router.patch(
+  "/types/:id",
+  checkAuth(Role.ADMIN),
+  PackageController.updatePackageType
+);
+
+router.delete(
+  "/types/:id",
+  checkAuth(Role.ADMIN),
+  PackageController.deletePackageType
+);
+
 router.get("/all", PackageController.getAllPackages);
+
+// add my packages pending
+router.get("/my", checkAuth(Role.GUIDE), PackageController.getMyPackages);
 
 router.post(
   "/create",
-  checkAuth(Role.ADMIN),
+  checkAuth(Role.ADMIN, Role.GUIDE),
   validateRequest(createPackageZodSchema),
   PackageController.createPackage
 );

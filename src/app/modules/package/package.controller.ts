@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { catchAsync } from "../../utils/catchAsync";
 import { sendResponse } from "../../utils/sendResponse";
 import { IPackage, IPackageType } from "./package.interface";
+import { Package } from "./package.model";
 import { PackageService } from "./package.service";
 
 const createPackage = catchAsync(async (req: Request, res: Response) => {
@@ -28,6 +29,12 @@ const getAllPackages = catchAsync(async (req: Request, res: Response) => {
     data: resData.data,
     meta: resData.meta,
   });
+});
+
+const getMyPackages = catchAsync(async (req, res) => {
+  const guideId = req.user._id;
+  const packages = await Package.find({ guide: guideId });
+  res.json({ data: packages });
 });
 
 const getSinglePackage = catchAsync(async (req: Request, res: Response) => {
@@ -91,9 +98,36 @@ const getAllPackageTypes = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+const updatePackageType = catchAsync(async (req: Request, res: Response) => {
+  const id = req.params.id;
+  const payload: Partial<IPackageType> = req.body;
+
+  const result = await PackageService.updatePackageType(id, payload);
+
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: "Package type updated successfully",
+    data: result,
+  });
+});
+
+const deletePackageType = catchAsync(async (req: Request, res: Response) => {
+  const id = req.params.id;
+
+  const result = await PackageService.deletePackageType(id);
+
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: "Package type deleted successfully",
+    data: result,
+  });
+});
+
 const getPackageStats = catchAsync(async (req: Request, res: Response) => {
   const result = await PackageService.getPackageStats();
-  
+
   sendResponse(res, {
     statusCode: 200,
     success: true,
@@ -105,10 +139,13 @@ const getPackageStats = catchAsync(async (req: Request, res: Response) => {
 export const PackageController = {
   createPackage,
   getAllPackages,
+  getMyPackages,
   getSinglePackage,
   updatePackage,
   deletePackage,
   createPackageType,
   getAllPackageTypes,
   getPackageStats,
+  updatePackageType,
+  deletePackageType,
 };

@@ -1,5 +1,5 @@
 import z from "zod";
-import { Role } from "./user.interface";
+import { AccountStatus, Role } from "./user.interface";
 
 export const createZodSchema = z.object({
   name: z
@@ -38,7 +38,7 @@ export const createZodSchema = z.object({
       message: "Password must contain at least 1 number.",
     }),
 
-  role: z.enum(Object.values(Role) as [string]).optional(),
+  role: z.enum(Object.values(Role) as [string]),
 });
 
 export const updateUserZodSchema = z
@@ -86,5 +86,6 @@ export const updateUserZodSchema = z
         },
       })
       .optional(),
+    status: z.enum(Object.values(AccountStatus) as [string]).optional(),
   })
   .strict();

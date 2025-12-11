@@ -43,6 +43,8 @@ const packageSchema = new Schema<IPackage>(
     packageType: { type: Schema.Types.ObjectId, ref: "PackageType" },
     tags: { type: [String], default: [] },
     isActive: { type: Boolean, default: true },
+    guide: { type: Schema.Types.ObjectId, ref: "User", required: true },
+    meetingPoint: { type: String },
   },
   { timestamps: true, versionKey: false }
 );

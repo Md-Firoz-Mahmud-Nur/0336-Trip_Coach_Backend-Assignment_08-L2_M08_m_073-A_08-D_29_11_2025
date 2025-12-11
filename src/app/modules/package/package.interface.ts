@@ -35,4 +35,6 @@ export interface IPackage {
   updatedAt?: Date;
   isActive?: boolean;
   deleteImages?: string[];
+  meetingPoint?: string;
+  guide?: Types.ObjectId;
 }
