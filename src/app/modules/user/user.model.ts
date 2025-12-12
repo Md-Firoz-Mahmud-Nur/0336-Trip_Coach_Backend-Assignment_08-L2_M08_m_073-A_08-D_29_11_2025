@@ -1,6 +1,23 @@
 import { model, Schema } from "mongoose";
 import { AccountStatus, IAuthProvider, IUser, Role } from "./user.interface";
 
+const guideProfileSchema = new Schema(
+  {
+    city: String,
+    languages: [String],
+    experience: String,
+    tourType: String,
+    availability: String,
+    bio: String,
+    portfolio: String,
+    social: String,
+  },
+  {
+    _id: false,
+    versionKey: false,
+  }
+);
+
 const authProviderSchema = new Schema<IAuthProvider>(
   {
     provider: { type: String, required: true },
@@ -19,6 +36,7 @@ const userSchema = new Schema<IUser>(
     email: { type: String, required: true, unique: true },
     password: { type: String },
     isGuideDocumentSubmit: { type: Boolean, default: false },
+    isGuide: { type: Boolean, default: false },
 
     // user role
     role: {
@@ -48,6 +66,11 @@ const userSchema = new Schema<IUser>(
       default: [],
     },
 
+    guideProfile: {
+      type: guideProfileSchema,
+      default: null,
+    },
+
     // relations
     bookings: [{ type: Schema.Types.ObjectId, ref: "Booking" }],
     reviews: [{ type: Schema.Types.ObjectId, ref: "Review" }],
@@ -58,5 +81,7 @@ const userSchema = new Schema<IUser>(
     versionKey: false,
   }
 );
+
+
 
 export const User = model<IUser>("User", userSchema);

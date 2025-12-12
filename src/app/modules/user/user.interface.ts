@@ -18,6 +18,17 @@ export enum AccountStatus {
   DELETED = "DELETED",
 }
 
+export interface IGuideProfile {
+  city?: string;
+  languages?: string[];
+  experience?: string;
+  tourType?: string;
+  availability?: string;
+  bio?: string;
+  portfolio?: string;
+  social?: string;
+}
+
 export interface IUser {
   _id?: Types.ObjectId;
 
@@ -25,6 +36,7 @@ export interface IUser {
   email: string;
   password?: string;
   isGuideDocumentSubmit: boolean;
+  isGuide: boolean;
 
   phone?: string;
   picture?: string;
@@ -41,4 +53,6 @@ export interface IUser {
   bookings?: Types.ObjectId[];
   reviews?: Types.ObjectId[];
   wishlist?: Types.ObjectId[];
+
+  guideProfile?: IGuideProfile;
 }
