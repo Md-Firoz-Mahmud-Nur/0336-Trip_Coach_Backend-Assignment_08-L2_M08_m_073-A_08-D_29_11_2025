@@ -17,7 +17,11 @@ app.use(express.json());
 
 app.use(
   cors({
-    origin: ["http://localhost:3000", "http://localhost:3001"],
+    origin: [
+      "http://localhost:3000",
+      "http://localhost:3001",
+      "https://0337-trip-coach-frontend-assignment.vercel.app",
+    ],
     credentials: true,
   })
 );
