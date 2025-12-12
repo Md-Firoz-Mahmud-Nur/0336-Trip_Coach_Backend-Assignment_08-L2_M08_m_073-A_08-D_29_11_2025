@@ -1,5 +1,16 @@
 # Trip Coach Backend - REST API for Travel Platform
 
+This is a trip booking platform where tourists can search and book travel packages offered by local guides.
+
+## 🚀 Live Demo
+
+> [Trip Coach](https://0337-trip-coach-frontend-assignment.vercel.app)
+
+> Frontend: [Trip Coach Client](https://github.com/Md-Firoz-Mahmud-Nur/0337-Trip_Coach_Frontend-Assignment_08-L2_M08_m_073-A_08-D_29_11_2025)
+
+> Backend: [Trip Coach Server](https://github.com/Md-Firoz-Mahmud-Nur/0336-Trip_Coach_Backend-Assignment_08-L2_M08_m_073-A_08-D_29_11_2025)
+
+
 ## Features
 
 *   Authentication & Authorization
@@ -46,8 +57,87 @@
 *   Tooling
     +   TypeScript for type safety (if configured).
     +   Nodemon / ts-node-dev for local development.
+       
 
-## Setup Instructions
+## API Endpoints
 
-1. Clone the repository:
+### Auth Routes
 
+| Method | Endpoint                       | Description                   | Access        | 
+|--------|--------------------------------|-------------------------------|---------------|
+| POST   | `/api/v1/auth/login`           | login                         | Public        |
+| POST   | `/api/v1/auth/refresh-token`   | Get new access token          | Public        |
+| POST   | `/api/v1/auth/logout`          | logout                        | Authenticated |
+| POST   | `/api/v1/auth/reset-password`  | Change user password          | Authenticated |
+
+### User Routes
+
+| Method | Endpoint                       | Description                   | Access        |
+|--------|--------------------------------|-------------------------------|---------------|
+| POST   | `/api/v1/user/register`        | Register a new user           | Public        |
+| GET    | `/api/v1/user/all-users`       | Get all users                 | Admin         |
+| GET    | `/api/v1/user/:id`             | Get a single user by ID       | Admin         |
+| GET    | `/api/v1/user/me`              | Get current logged-in user    | Authenticated |
+| PATCH  | `/api/v1/user/:id`             | Update user by ID             | Authenticated |
+
+### Package Routes
+
+| Method | Endpoint                        | Description                       | Access                  |
+|--------|---------------------------------|-----------------------------------|-------------------------|
+| POST   | `/api/v1/package/create-parcel` | Create a new package              | Sender                  |
+| GET    | `/api/v1/package/all-parcel`    | Get all package                   | Admin                   |
+| GET    | `/api/v1/package/mine`          | Get package created by guide      | Sender                  |
+| GET    | `/api/v1/package/incoming`      | Get package destined for tourist  | Receiver                |
+| GET    | `/api/v1/package/:trackingId`   | Get package by trackingId         | Admin & Authenticated   |
+| PATCH  | `/api/v1/package/:trackingId`   | Update package status             | Admin & Sender          |
+
+--- 
+
+
+##  Local Setup
+
+### 1️⃣ Clone & Install
+
+```
+git clone https://github.com/Md-Firoz-Mahmud-Nur/0336-Trip_Coach_Backend-Assignment_08-L2_M08_m_073-A_08-D_29_11_2025.git
+cd 0336-Trip_Coach_Backend-Assignment_08-L2_M08_m_073-A_08-D_29_11_2025
+npm install
+```
+
+### 2️⃣ Run Locally
+
+```
+npm run dev
+```
+
+## Environment Variables
+
+Create a `.env` file in the project root and configure:
+
+```bash
+MONGO_DB_USER=
+MONGO_DB_SECRET_KEY=
+MONGO_DB_URI_SECRET_KEY=
+PORT=5000
+NODE_ENV=development
+JWT_ACCESS_SECRET=
+JWT_ACCESS_EXPIRE=
+JWT_REFRESH_SECRET=
+JWT_REFRESH_EXPIRE=
+BCRYPT_SALT_ROUND=
+ADMIN_EMAIL=
+ADMIN_PASSWORD=
+FRONTEND_URL=http://localhost:3000
+```
+
+## 👨‍💻 Developed by
+
+### Md. Firoz Mahmud Nur
+
+Full-Stack Web Developer
+
+> 📧 firoznur5@gmail.com
+
+> 📧 [Portfolio](https://nurweb.dev)
+ 
+> 🔗 [LinkedIn](https://www.linkedin.com/in/md-firoz-mahmud-nur)
