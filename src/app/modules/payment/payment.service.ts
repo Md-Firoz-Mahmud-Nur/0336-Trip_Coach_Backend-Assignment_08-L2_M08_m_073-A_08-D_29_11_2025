@@ -14,11 +14,8 @@ const createCheckoutSession = async (
   successUrl: string,
   cancelUrl: string
 ) => {
-  console.log("Creating checkout session: ", bookingId);
   const booking = await Booking.findById(bookingId).populate("package");
   if (!booking) throw new AppError(404, "Booking not found");
-
-  console.log("Booking found:", booking);
 
   if (booking?.paymentStatus === "PAID") {
     throw new AppError(400, "Booking already paid");

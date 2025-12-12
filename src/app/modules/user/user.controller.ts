@@ -145,7 +145,6 @@ const submitGuideApplication = async (req: Request, res: Response) => {
   });
 };
 
-
 const getPendingGuideApplications = async (req: Request, res: Response) => {
   const users = await User.find({
     isGuideDocumentSubmit: true,
@@ -166,7 +165,6 @@ const approveGuide = async (req: Request, res: Response) => {
     userId,
     {
       isGuide: true,
-      role: Role.GUIDE,
     },
     { new: true }
   );
@@ -189,6 +187,7 @@ const rejectGuide = async (req: Request, res: Response) => {
     userId,
     {
       isGuideDocumentSubmit: false,
+      isGuide: false,
       guideProfile: null,
     },
     { new: true }

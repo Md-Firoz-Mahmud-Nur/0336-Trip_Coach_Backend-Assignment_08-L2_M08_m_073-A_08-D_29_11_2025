@@ -30,7 +30,6 @@ const getAllPackages = async (query: Record<string, string>) => {
 };
 
 const getSinglePackage = async (id: string) => {
-  console.log({ id });
   const pkg = await Package.findById(id).populate("packageType").lean();
   if (!pkg) throw new Error("Package not found.");
   return pkg;

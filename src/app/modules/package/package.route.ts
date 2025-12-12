@@ -32,8 +32,7 @@ router.delete(
 
 router.get("/all", PackageController.getAllPackages);
 
-// add my packages pending
-router.get("/my", checkAuth(Role.GUIDE), PackageController.getMyPackages);
+router.get("/my/:id", checkAuth(Role.GUIDE), PackageController.getMyPackages);
 
 router.post(
   "/create",

@@ -32,7 +32,7 @@ const getAllPackages = catchAsync(async (req: Request, res: Response) => {
 });
 
 const getMyPackages = catchAsync(async (req, res) => {
-  const guideId = req.user._id;
+  const guideId = req.params.id;
   const packages = await Package.find({ guide: guideId });
   res.json({ data: packages });
 });
