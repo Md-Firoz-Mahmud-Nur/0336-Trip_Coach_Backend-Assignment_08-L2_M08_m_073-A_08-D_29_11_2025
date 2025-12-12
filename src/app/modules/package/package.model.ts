@@ -79,12 +79,12 @@ packageSchema.pre("findOneAndUpdate", async function (next) {
       .replace(/\s+/g, "-");
     let slug = base;
     let counter = 1;
-    // Need to reference Model; require at runtime to avoid hoisting issues
-    // @ts-ignore
-    const PackageModel = this.model("Package");
-    while (await PackageModel.exists({ slug })) {
+
+    // use the already-defined model instead of this.model("Package")
+    while (await Package.exists({ slug })) {
       slug = `${base}-${counter++}`;
     }
+
     update.slug = slug;
     this.setUpdate(update);
   }
