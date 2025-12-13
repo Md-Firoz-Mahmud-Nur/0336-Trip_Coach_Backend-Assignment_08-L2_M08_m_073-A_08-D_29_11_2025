@@ -25,6 +25,7 @@ export const createPackageZodSchema = z.object({
   tags: z.array(z.string()).optional(),
   deleteImages: z.array(z.string()).optional(),
   meetingPoint: z.string().optional(),
+  images: z.array(z.string()).optional(),
 });
 
 export const updatePackageZodSchema = createPackageZodSchema.partial();
