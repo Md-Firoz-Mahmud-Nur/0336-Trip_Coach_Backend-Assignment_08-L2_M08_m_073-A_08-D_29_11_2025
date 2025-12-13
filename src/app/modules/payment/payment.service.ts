@@ -17,18 +17,24 @@ const createCheckoutSession = async (
   const booking = await Booking.findById(bookingId).populate("package");
   if (!booking) throw new AppError(404, "Booking not found");
 
-  if (booking?.paymentStatus === "PAID") {
+  if (booking.paymentStatus === "PAID") {
     throw new AppError(400, "Booking already paid");
   }
 
   const pkg: any = booking.package;
-  const amount = Math.round((booking.totalAmount || 0) * 100);
-  const currency = (booking.currency || "USD").toLowerCase();
+
+  // booking.totalAmount is in BDT; convert to USD (example rate)
+  const amountBdt = booking.totalAmount || 0;
+  const usdRate = 127; // 1 USD = 127 BDT (example, you should pull from config/API)
+  const amountUsd = amountBdt / usdRate;
+
+  // Stripe expects smallest unit: cents for usd
+  const unitAmount = Math.round(amountUsd * 100);
 
   const paymentRecord = await Payment.create({
     booking: booking._id,
-    amount: booking.totalAmount,
-    currency: booking.currency || "USD",
+    amount: amountBdt, // keep original BDT amount in DB
+    currency: "BDT", // your app's currency
     gateway: "STRIPE",
     status: PaymentStatus.PENDING,
   });
@@ -38,12 +44,12 @@ const createCheckoutSession = async (
     line_items: [
       {
         price_data: {
-          currency: currency,
+          currency: "usd", // force USD
           product_data: {
             name: `Trip Coach Booking For: ${pkg.title || "Service"}`,
             description: pkg.summary || pkg.description || "description",
           },
-          unit_amount: amount * 100,
+          unit_amount: unitAmount, // e.g. 210 BDT -> ~1.65 USD -> 165
         },
         quantity: 1,
       },
@@ -54,6 +60,8 @@ const createCheckoutSession = async (
     metadata: {
       bookingId: booking._id.toString(),
       paymentId: paymentRecord._id.toString(),
+      appCurrency: "BDT",
+      appAmount: amountBdt.toString(),
     },
   });
 
