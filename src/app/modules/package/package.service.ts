@@ -39,27 +39,31 @@ const updatePackage = async (id: string, payload: Partial<IPackage>) => {
   const existing = await Package.findById(id);
   if (!existing) throw new Error("Package not found.");
 
-  if (payload.images && payload.images.length > 0) {
-    payload.images = [...(existing.images || []), ...payload.images];
+  if (payload.images) {
+    payload.images = payload.images; // overwrite
   }
 
-  if (payload.deleteImages && payload.deleteImages.length > 0) {
-    const remaining = (existing.images || []).filter(
-      (u) => !payload.deleteImages?.includes(u)
-    );
-    const newImgs = (payload.images || []).filter(
-      (i) => !payload.deleteImages?.includes(i)
-    );
-    payload.images = [...remaining, ...newImgs];
-  }
+  // if (payload.images && payload.images.length > 0) {
+  //   payload.images = [...(existing.images || []), ...payload.images];
+  // }
+
+  // if (payload.deleteImages && payload.deleteImages.length > 0) {
+  //   const remaining = (existing.images || []).filter(
+  //     (u) => !payload.deleteImages?.includes(u)
+  //   );
+  //   const newImgs = (payload.images || []).filter(
+  //     (i) => !payload.deleteImages?.includes(i)
+  //   );
+  //   payload.images = [...remaining, ...newImgs];
+  // }
 
   const updated = await Package.findByIdAndUpdate(id, payload, { new: true });
 
-  if (payload.deleteImages && payload.deleteImages.length > 0) {
-    await Promise.all(
-      payload.deleteImages.map((url) => deleteImageFromCLoudinary(url))
-    );
-  }
+  // if (payload.deleteImages && payload.deleteImages.length > 0) {
+  //   await Promise.all(
+  //     payload.deleteImages.map((url) => deleteImageFromCLoudinary(url))
+  //   );
+  // }
 
   return updated;
 };
