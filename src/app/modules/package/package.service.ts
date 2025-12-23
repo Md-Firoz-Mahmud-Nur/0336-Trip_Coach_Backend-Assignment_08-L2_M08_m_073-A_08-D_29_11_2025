@@ -15,8 +15,54 @@ const createPackage = async (payload: IPackage) => {
   return created;
 };
 
+// const getAllPackages = async (query: Record<string, string>) => {
+//   const qb = new QueryBuilder(Package.find(), query);
+//   const packagesQuery = qb
+//     .search(packageSearchableFields)
+//     .filter()
+//     .sort()
+//     .fields()
+//     .paginate();
+
+//   const [data, meta] = await Promise.all([packagesQuery.build(), qb.getMeta()]);
+
+//   return { data, meta };
+// };
+
+// const getAllPackages = async (query: Record<string, string>) => {
+//   const { destination, ...rest } = query;
+
+//   const baseFilter: Record<string, any> = {};
+
+//   if (destination) {
+//     baseFilter.destination = { $regex: destination, $options: "i" };
+//   }
+
+//   const qb = new QueryBuilder(Package.find(baseFilter), rest);
+
+//   const packagesQuery = qb
+//     .search(packageSearchableFields)
+//     .filter()
+//     .sort()
+//     .fields()
+//     .paginate();
+
+//   const [data, meta] = await Promise.all([packagesQuery.build(), qb.getMeta()]);
+
+//   return { data, meta };
+// };
+
 const getAllPackages = async (query: Record<string, string>) => {
-  const qb = new QueryBuilder(Package.find(), query);
+  const { destination, ...rest } = query;
+
+  const baseFilter: Record<string, any> = {};
+
+  if (destination) {
+    baseFilter.destination = { $regex: destination, $options: "i" };
+  }
+
+  const qb = new QueryBuilder(Package.find(baseFilter), rest, baseFilter);
+
   const packagesQuery = qb
     .search(packageSearchableFields)
     .filter()
